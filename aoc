@@ -1,0 +1,22 @@
+#!/bin/bash
+cmd="$1"
+if [ $# -eq 1 ]
+then
+	day=$(date +%d)
+else
+	day=$2
+fi
+
+if [ $cmd = "download" ]
+then
+	url="https://adventofcode.com"
+	year="2024"
+	cookie=$(<.session)
+	curl -v --cookie session=${cookie} "${url}/${year}/day/$((10#$day))/input" > inputs/${day};
+elif [ $cmd = "run" ]
+then
+	julia ${day}.jl inputs/${day}
+elif [ $cmd = "test" ]
+then
+	julia ${day}.jl inputs/test
+fi
