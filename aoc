@@ -1,4 +1,7 @@
 #!/bin/bash
+base_url="https://adventofcode.com"
+year="2024"
+
 cmd="$1"
 if [ $# -eq 1 ]
 then
@@ -7,16 +10,24 @@ else
 	day=$2
 fi
 
+url="${base_url}/${year}/day/$((10#$day))"
+
 if [ $cmd = "download" ]
 then
-	url="https://adventofcode.com"
-	year="2024"
-	cookie=$(<.session)
-	curl -v --cookie session=${cookie} "${url}/${year}/day/$((10#$day))/input" > inputs/${day};
+	curl --cookie $(<.cookie) "${url}/input" > inputs/${day};
 elif [ $cmd = "run" ]
 then
 	julia ${day}.jl inputs/${day}
 elif [ $cmd = "test" ]
 then
 	julia ${day}.jl inputs/test
+elif [ $cmd = "commit" ]
+then
+	git add ${day}.jl && git commit -m "Day ${day}"
+elif [ $cmd = "submit" ]
+then
+	output=$(julia ${day}.jl inputs/${day})
+	nlines=$(wc -l <<< $output)
+	lastline=$(tail -n1 <<< $output)
+	curl --cookie $(<.cookie) -d "level=${nlines}&answer=${lastline}" -X POST "${url}/answer"
 fi
