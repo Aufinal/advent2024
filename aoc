@@ -24,10 +24,7 @@ then
 elif [ $cmd = "commit" ]
 then
 	git add ${day}.jl && git commit -m "Day ${day}"
-elif [ $cmd = "submit" ]
+elif [ $cmd = "setup" ]
 then
-	output=$(julia ${day}.jl inputs/${day})
-	nlines=$(wc -l <<< $output)
-	lastline=$(tail -n1 <<< $output)
-	curl --cookie $(<.cookie) -d "level=${nlines}&answer=${lastline}" -X POST "${url}/answer"
+	cp template.jl ${day}.jl
 fi
